@@ -1,2 +1,5 @@
+# Ignore data directory
+data_BIDS/
+
 # Ignore results directory
 results/
