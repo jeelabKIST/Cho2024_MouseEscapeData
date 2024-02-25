@@ -3,3 +3,6 @@ data_BIDS/
 
 # Ignore results directory
 results/
+
+# Ignore macOS specific files
+*.DS_Store
