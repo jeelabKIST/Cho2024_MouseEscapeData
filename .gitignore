@@ -6,3 +6,6 @@ results/
 
 # Ignore macOS specific files
 *.DS_Store
+
+# Ignore external software
+utils/eeglab2023.0/
