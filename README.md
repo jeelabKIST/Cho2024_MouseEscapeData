@@ -8,7 +8,7 @@
 
 This repository hosts the scripts required to replicate the burst detection analysis and the figures presented in the Technical Validation section of our paper.
 
-For installation, download the repository folder, modify the paths to reflect the folder's location, and execute the scripts. Please note that, to ensure the scripts run properly, it is necessary to install EEGLAB (v2023.0) and download our dataset. The EEGLAB software is available for download from its official [website](https://sccn.ucsd.edu/eeglab/download.php), while our dataset is accessible through the GIN G-Node [repository](https://gin.g-node.org/hiobeen/Mouse-threat-and-escape-CBRAIN) (within `data_BIDS` directory).
+For installation, download the repository folder, modify the paths to reflect the folder's location, and execute the scripts. Please note that, to ensure the scripts run properly, it is necessary to install EEGLAB (v2023.0) and download our dataset. The EEGLAB software is available for download from its official [website](https://sccn.ucsd.edu/eeglab/download.php), while our dataset is accessible through the GIN G-Node [repository](https://gin.g-node.org/JEELAB/Mouse-threat-and-escape-CBRAIN) (within `data_BIDS` directory).
 
 After downloading, move EEGLAB to the `utils` folder and `data_BIDS` to the main directory for easier access. For instance, you can run:
 
