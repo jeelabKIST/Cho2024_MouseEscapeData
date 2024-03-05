@@ -21,23 +21,23 @@ brown = "#A71D31";
 wheat = "#F5DFBB";
 %% Summary #1: Burst Detection on LFP Signals
 DATA_DIR = '/Users/scho/Cho2024_MouseEscapeData/data_BIDS/';
-eeg_data_path = '%ssub-%02d/ses-%02d/eeg/';
+lfp_data_path = '%ssub-%02d/ses-%02d/eeg/';
 fprintf(['Processing Mouse #' num2str(mouse_id) ' Session #' num2str(session_id) ' ... \n']);
 % [1] Load Data
-eeg_data_name = dir([sprintf(eeg_data_path, DATA_DIR, mouse_id, session_id) '*.set']);
-EEG = pop_loadset('filename', eeg_data_name.name, 'filepath', eeg_data_name.folder, 'verbose', 'off');
+lfp_data_name = dir([sprintf(lfp_data_path, DATA_DIR, mouse_id, session_id) '*.set']);
+LFP = pop_loadset('filename', lfp_data_name.name, 'filepath', lfp_data_name.folder, 'verbose', 'off');
 % [2] Apply Bandpass Filtering
-[EEG_beta, ~, ~] = pop_eegfiltnew(EEG, beta_fb(1), beta_fb(2));
-[EEG_gamma, ~, ~] = pop_eegfiltnew(EEG, gamma_fb(1), gamma_fb(2));
+[LFP_beta, ~, ~] = pop_eegfiltnew(LFP, beta_fb(1), beta_fb(2));
+[LFP_gamma, ~, ~] = pop_eegfiltnew(LFP, gamma_fb(1), gamma_fb(2));
 % NOTE: Signals are filtered using the Hamming windowed sinc FIR filter
 % in the EEGLAB software (v2023.0).
 % [3] Define Variables
-times = EEG.times;
-Fs = EEG.srate;
+times = LFP.times;
+Fs = LFP.srate;
 Nyq = Fs / 2;
-raw_data = EEG.data';
-data_beta = double(EEG_beta.data);
-data_gamma = double(EEG_gamma.data);
+raw_data = LFP.data';
+data_beta = double(LFP_beta.data);
+data_gamma = double(LFP_gamma.data);
 n_channels = size(raw_data,2);
 % [4] Apply an IIR Notch Filter to Signals
 w0 = 60 / Nyq;

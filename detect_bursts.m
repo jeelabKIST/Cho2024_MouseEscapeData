@@ -39,22 +39,22 @@ BURST_INFO.binary = cell(n_mouse * n_session, 2); % binary burst time stamps
 % data size: (total # of trials x # of channels)
 %% Detect Bursts
 DATA_DIR = '/Users/scho/Cho2024_MouseEscapeData/data_BIDS/';
-eeg_data_path = '%ssub-%02d/ses-%02d/eeg/';
+lfp_data_path = '%ssub-%02d/ses-%02d/eeg/';
 trial_id = 1;
 for m_idx = mouse_ids
     for s_idx = session_ids
         fprintf(['Processing Mouse #' num2str(m_idx) ' Session #' num2str(s_idx) ' ... \n']);
         % [1] Load Data
-        eeg_data_name = dir([sprintf(eeg_data_path, DATA_DIR, m_idx, s_idx) '*.set']);
-        EEG = pop_loadset('filename', eeg_data_name.name, 'filepath', eeg_data_name.folder, 'verbose', 'off');
+        lfp_data_name = dir([sprintf(lfp_data_path, DATA_DIR, m_idx, s_idx) '*.set']);
+        LFP = pop_loadset('filename', lfp_data_name.name, 'filepath', lfp_data_name.folder, 'verbose', 'off');
         % [2] Apply Bandpass Filtering
-        [EEG, ~, ~] = pop_eegfiltnew(EEG, lo_f, hi_f);
+        [LFP, ~, ~] = pop_eegfiltnew(LFP, lo_f, hi_f);
         % NOTE: Signals are filtered using the Hamming windowed sinc FIR 
         % filter in the EEGLAB software (v2023.0).
         % [3] Define Variables
-        times = EEG.times;         % time array
-        data = double(EEG.data);   % LFP recordings
-        Fs = EEG.srate;            % sampling frequency
+        times = LFP.times;         % time array
+        data = double(LFP.data);   % LFP recordings
+        Fs = LFP.srate;            % sampling frequency
         Nyq = Fs / 2;              % Nyquist frequency
         n_channels = size(data,2); % number of channels
         % [4] Apply IIR Notch Filter to Signals
