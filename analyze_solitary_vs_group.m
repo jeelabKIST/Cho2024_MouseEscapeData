@@ -14,17 +14,27 @@ SOLIT_INFO = load(sprintf(data_path, 'solitary', freq_band)).BURST_INFO;
 GROUP_INFO = load(sprintf(data_path, 'group', freq_band)).BURST_INFO;
 solit_binary = SOLIT_INFO.binary;
 group_binary = GROUP_INFO.binary;
+%% Delete Unavailable Trials
+empty_flag = and(~cellfun('isempty', solit_binary(:, 1)), ~cellfun('isempty', group_binary(:, 1)));
+solit_binary = solit_binary(empty_flag, :);
+group_binary = group_binary(empty_flag, :);
 %% Set Hyperparameters
 Fs = 1024;     % sampling frequency
-nTrials = 64;  % total number of trials
 nChannels = 2; % total number of channels
 nStages = 4;   % total number of task stages
+nTrials = length(solit_binary); % total number of trials
 %% Compute Burst Occurrence Rates
+% [1] For Solitary Condition
 solit_rates = zeros(nChannels, nTrials, length(solit_binary{1, 1})/Fs);
-group_rates = zeros(nChannels, nTrials, length(group_binary{1, 1})/Fs);
 for c = 1:nChannels
     for n = 1:nTrials
         solit_rates(c, n, :) = smooth_ma(solit_binary{n, c}, Fs);
+    end
+end
+% [2] For Group Condition
+group_rates = zeros(nChannels, nTrials, length(group_binary{1, 1})/Fs);
+for c = 1:nChannels
+    for n = 1:nTrials
         group_rates(c, n, :) = smooth_ma(group_binary{n, c}, Fs);
     end
 end
@@ -38,7 +48,25 @@ solit_rates_mean = squeeze(mean(solit_rates_stage, 2));
 solit_rates_std = squeeze(std(solit_rates_stage, 0, 2));
 group_rates_mean = squeeze(mean(group_rates_stage, 2));
 group_rates_std = squeeze(std(group_rates_stage, 0, 2));
-% [2] Check for Symmetry of Pairwise Differences Assumption
+% [2] Check Normality Assumption for Each Channel and Stage
+fprintf('Checking data normality ... \n');
+for c = 1:nChannels
+    for n = 1:nStages
+        [h_solit, p_solit] = kstest(zscore(solit_rates_stage(c, :, n)));
+        [h_group, p_group] = kstest(zscore(group_rates_stage(c, :, n)));
+        fprintf('\t[Channel #%d, Stage #%d] Solitary: %d (%d) | Group: %d (%d) \n', c, n, p_solit, h_solit, p_group, h_group);
+    end
+end
+% [3] Check Equal Variance Assumption
+fprintf('Checking data variance ... \n');
+for c = 1:nChannels
+    for n = 1:nStages
+        temp_data = [squeeze(solit_rates_stage(c, :, n)); squeeze(group_rates_stage(c, :, n))]';
+        p_ev = vartestn(temp_data, 'TestType', 'LeveneQuadratic', 'Display', 'off');
+        fprintf('\t[Channel #%d, Solitary vs. Group] p-value: %d \n', c, p_ev);
+    end
+end
+% [4] Check for Symmetry of Pairwise Differences Assumption
 verbose = true;
 for c = 1:nChannels
     for n = 1:nStages
@@ -51,7 +79,7 @@ for c = 1:nChannels
         end
     end
 end
-% [3] Perform Wilcoxon Signed-Rank Test
+% [5] Perform Wilcoxon Signed-Rank Test
 fprintf('Running Wilcoxon Signed-Rank Test ... \n');
 wilcoxon_pvals = zeros(nChannels, nStages); % p-values
 wilcoxon_stats = zeros(nChannels, nStages); % test statistics
