@@ -41,12 +41,17 @@ BURST_INFO.binary = cell(n_mouse * n_session, 2); % binary burst time stamps
 DATA_DIR = '/Users/scho/Cho2024_MouseEscapeData/data_BIDS/';
 lfp_data_path = '%ssub-%02d/ses-%02d/eeg/';
 trial_id = 1;
+sess_counts = 0;
 for m_idx = mouse_ids
     for s_idx = session_ids
         fprintf(['Processing Mouse #' num2str(m_idx) ' Session #' num2str(s_idx) ' ... \n']);
         % [1] Load Data
-        lfp_data_name = dir([sprintf(lfp_data_path, DATA_DIR, m_idx, s_idx) '*.set']);
-        LFP = pop_loadset('filename', lfp_data_name.name, 'filepath', lfp_data_name.folder, 'verbose', 'off');
+        lfp_data_info = dir([sprintf(lfp_data_path, DATA_DIR, m_idx, s_idx) '*.set']);
+        if isempty(lfp_data_info)
+            trial_id = trial_id + 1;
+            continue;
+        end
+        LFP = pop_loadset('filename', lfp_data_info.name, 'filepath', lfp_data_info.folder, 'verbose', 'off');
         % [2] Apply Bandpass Filtering
         [LFP, ~, ~] = pop_eegfiltnew(LFP, lo_f, hi_f);
         % NOTE: Signals are filtered using the Hamming windowed sinc FIR 
@@ -74,8 +79,11 @@ for m_idx = mouse_ids
         BURST_INFO.bursts(trial_id, :) = {burst_pfc, burst_bla};
         BURST_INFO.binary(trial_id, :) = {binary_events_pfc, binary_events_bla};
         trial_id = trial_id + 1;
+        % [7] Track Meta Information
+        sess_counts = sess_counts + 1;
     end
 end
+fprintf(['Total Number of Data Sessions Processed: ', num2str(sess_counts), '\n']);
 %% Save Burst Detections
 % [1] Make a directory to save outputs (if necessary)
 save_dir = fullfile(pwd, 'results');
