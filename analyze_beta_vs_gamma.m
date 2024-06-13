@@ -14,11 +14,18 @@ BETA_INFO = load(sprintf(data_path, 'beta')).BURST_INFO;
 GAMMA_INFO = load(sprintf(data_path, 'gamma')).BURST_INFO;
 beta_binary = BETA_INFO.binary;
 gamma_binary = GAMMA_INFO.binary;
+%% Delete Unavailable Trials
+if length(beta_binary) ~= length(gamma_binary)
+    error('The number of trials does not match.');
+end
+empty_flag = ~cellfun('isempty', beta_binary(:, 1));
+beta_binary = beta_binary(empty_flag, :);
+gamma_binary = gamma_binary(empty_flag, :);
 %% Set Hyperparameters
 Fs = 1024;     % sampling frequency
-nTrials = 64;  % total number of trials
 nChannels = 2; % total number of channels
 nStages = 4;   % total number of task stages
+nTrials = length(beta_binary); % total number of trials
 %% Compute Burst Occurrence Rates
 beta_rates = zeros(nChannels, nTrials, length(beta_binary{1, 1})/Fs);
 gamma_rates = zeros(nChannels, nTrials, length(gamma_binary{1, 1})/Fs);
@@ -65,8 +72,8 @@ end
 fprintf('Running Friedman Test ... \n');
 friedman_multcompare = cell(nChannels, 2);
 for c = 1:nChannels
-    [p_beta, tbl_beta, stats_beta] = friedman(squeeze(beta_rates_stage(c, :, :)), nStages, 'off');
-    [p_gamma, tbl_gamma, stats_gamma] = friedman(squeeze(gamma_rates_stage(c, :, :)), nStages, 'off');
+    [p_beta, tbl_beta, stats_beta] = friedman(squeeze(beta_rates_stage(c, :, :)), 1, 'off');
+    [p_gamma, tbl_gamma, stats_gamma] = friedman(squeeze(gamma_rates_stage(c, :, :)), 1, 'off');
     fprintf('\t[Channel #%d, Beta] p-value: %d \n', c, p_beta);
     fprintf('\t[Channel #%d, Gamma] p-value: %d \n', c, p_gamma);
     friedman_multcompare{c, 1} = multcompare(stats_beta, 'CriticalValueType', 'tukey-kramer', 'Display', 'off');
