@@ -22,7 +22,7 @@ function plot_stage_burst_rate_band(br1_stage, br2_stage, channel_id, lbl_opt)
     % [nChannels x nTrials x nStages].
 
     % Written by SungJun Cho, November 12, 2023
-    % Last Modified on February 24, 2024
+    % Last Modified on May 25, 2024
     %% Set Parameters
     % [1] Validation
     if ~ismember(channel_id, [1, 2])
@@ -68,7 +68,7 @@ function plot_stage_burst_rate_band(br1_stage, br2_stage, channel_id, lbl_opt)
     end
     xticks(ticks);
     xticklabels(xaxis);
-    ylim([0 ax2.YLim(end) * 1.18]);
+    ylim([0 ax2.YLim(end) * 1.35]);
     if lbl_opt
         xlabel('Stages')
         ylabel('Stage-Averaged Burst Rates (/s)')
