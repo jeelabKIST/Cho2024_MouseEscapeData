@@ -24,8 +24,8 @@ DATA_DIR = '/Users/scho/Cho2024_MouseEscapeData/data_BIDS/';
 lfp_data_path = '%ssub-%02d/ses-%02d/eeg/';
 fprintf(['Processing Mouse #' num2str(mouse_id) ' Session #' num2str(session_id) ' ... \n']);
 % [1] Load Data
-lfp_data_name = dir([sprintf(lfp_data_path, DATA_DIR, mouse_id, session_id) '*.set']);
-LFP = pop_loadset('filename', lfp_data_name.name, 'filepath', lfp_data_name.folder, 'verbose', 'off');
+lfp_data_info = dir([sprintf(lfp_data_path, DATA_DIR, mouse_id, session_id) '*.set']);
+LFP = pop_loadset('filename', lfp_data_info.name, 'filepath', lfp_data_info.folder, 'verbose', 'off');
 % [2] Apply Bandpass Filtering
 [LFP_beta, ~, ~] = pop_eegfiltnew(LFP, beta_fb(1), beta_fb(2));
 [LFP_gamma, ~, ~] = pop_eegfiltnew(LFP, gamma_fb(1), gamma_fb(2));
@@ -38,7 +38,7 @@ Nyq = Fs / 2;
 raw_data = LFP.data';
 data_beta = double(LFP_beta.data);
 data_gamma = double(LFP_gamma.data);
-n_channels = size(raw_data,2);
+n_channels = size(raw_data,2) - 1; % exclude LED channel
 % [4] Apply an IIR Notch Filter to Signals
 w0 = 60 / Nyq;
 q_factor = 35;
@@ -63,15 +63,15 @@ for n = 1:n_channels
     plot_bursts(btime_gamma, burst_gamma, 0.8, green);
     % (C) Plot a Scale Bar
     if n == n_channels
-        line([94.8, 94.9], [-1.0, -1.0], 'LineWidth', 4, 'Color', 'k');
-        line([94.9, 94.9], [-0.9, -1.0], 'LineWidth', 4, 'Color', 'k');
-        text(94.85, -1.06, '100ms', 'FontSize', 20, 'FontName', 'Helvetica', 'FontWeight', 'bold', ...
+        line([94.6, 94.7], [-1.0, -1.0], 'LineWidth', 4, 'Color', 'k');
+        line([94.7, 94.7], [-0.9, -1.0], 'LineWidth', 4, 'Color', 'k');
+        text(94.65, -1.06, '100ms', 'FontSize', 20, 'FontName', 'Helvetica', 'FontWeight', 'bold', ...
             'HorizontalAlignment', 'center');
-        text(94.91, -0.95, '0.1mV', 'FontSize', 20, 'FontName', 'Helvetica', 'FontWeight', 'bold', ...
+        text(94.71, -0.95, '0.1mV', 'FontSize', 20, 'FontName', 'Helvetica', 'FontWeight', 'bold', ...
             'HorizontalAlignment', 'left');
     end
     % (D) Configure Figure Settings
-    set(gca, 'Box', 'off', 'TickLength', [0, 0], 'XLim', [93.7, 94.9], ...
+    set(gca, 'Box', 'off', 'TickLength', [0, 0], 'XLim', [93.5, 94.7], ...
         'XColor', 'none', 'YColor', 'none', 'Color', 'none');
     set(gcf, 'Color', 'w', 'Position', [476, 473, 758, 393]);
 end
@@ -90,7 +90,7 @@ plot(times, data_gamma(:,2), 'Color', gray, 'LineWidth', 3);
 yln_thr = yline(thr, 'Color', brown, 'LineWidth', 3, 'LineStyle', '-.', 'alpha', 1);
 yln_subthr = yline(subthr, 'Color', brown, 'LineWidth', 3, 'LineStyle', '-', 'alpha', 1);
 plot_bursts(btime_gamma, burst_gamma, 0, green, 3);
-set(gca, 'TickLength', [0, 0], 'XColor', 'none', 'YColor', 'none', 'Color', 'none', 'XLim', [94.3, 94.5]);
+set(gca, 'TickLength', [0, 0], 'XColor', 'none', 'YColor', 'none', 'Color', 'none', 'XLim', [94.1, 94.3]);
 set(gcf, 'Color', 'w');
 % [3] Plot Zoom-In Visualization (Selected BLA Burst)
 figure(); hold on;
