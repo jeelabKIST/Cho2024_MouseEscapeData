@@ -1,6 +1,6 @@
 # Cho2024_MouseEscapeData
 
-💡 Please email Jee Hyun Choi at jeechoi@kist.re.kr or SungJun Cho at sungjun.cho@psych.ox.ac.uk with any questions or concerns.
+💡 Please email Jee Hyun Choi at jeechoi@kist.re.kr or SungJun Cho at sungjun.cho@ndcn.ox.ac.uk with any questions or concerns. Alternatively, you can simply raise a GitHub issue.
 
 ---
 
