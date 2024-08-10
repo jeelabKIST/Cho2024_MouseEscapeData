@@ -1,5 +1,7 @@
 # Cho2024_MouseEscapeData
 
+🔗 Mouse Escape Behaviors and mPFC-BLA Activity Dataset: Understanding Flexible Defensive Strategies Under Threat (DOI: [10.1038/s41597-024-03688-0](https://doi.org/10.1038/s41597-024-03688-0))
+
 💡 Please email Jee Hyun Choi at jeechoi@kist.re.kr or SungJun Cho at sungjun.cho@ndcn.ox.ac.uk with any questions or concerns. Alternatively, you can simply raise a GitHub issue.
 
 ---
